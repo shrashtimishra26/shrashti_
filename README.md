@@ -1,2 +1,3 @@
-# shrashti_
-my first git hub repository
+shrashti_!
+author : shrashti  mishra 
+

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 num1=float(input("enter first number : "))
 operator=input("enter oprator(+,-,*,/,**):")
 num2=float(input(" enter second number :"))
@@ -16,3 +17,23 @@ elif operator== "/" :
         print("cannot divide by zero !")
 else:
     print(" invalid operator !")
+=======
+num1=float(input("enter first number : "))
+operator=input("enter oprator(+,-,*,/,**):")
+num2=float(input(" enter second number :"))
+if operator== "+" :
+    print( "result=",num1+num2)
+elif operator== "-" :
+    primt ("result=",num1-num2)
+elif operator== "*" :
+    print ("result=",num1*num2)
+elif operator== "**" :
+    print("result=",num1**num2)
+elif operator== "/" :
+    if num2!=0 :
+        print("result=",num1/num2) 
+    else:
+        print("cannot divide by zero !")
+else:
+    print(" invalid operator !")
+>>>>>>> d489349 (first commit)

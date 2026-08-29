@@ -3,6 +3,7 @@ if num%2==0:
     print("even number")
 elif num==0:
     print("this is zero")
+    
 else :
     print("odd number")
 
@@ -38,6 +39,10 @@ if  (chemistry<0 or chemistry>100 or python<0 or python>100 or physics<0 or phys
 else:
        print("invalid marks! marks should be bwt 0 and 100")
 
-    
+
+ num=int(input("enter your number::"))
+for i in range(1,11):
+    print(num,"x" ,i,"=" ,num*i)
+   
 
 #    

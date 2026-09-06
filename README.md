@@ -1,3 +1,4 @@
+#TASK 1
  num=int(input(" entre your number:"))
 if num%2==0:
     print("even number")
@@ -7,7 +8,7 @@ elif num==0:
 else :
     print("odd number")
 
-
+#TASK 2
 print("====student grades calculator====")
 name=input("entre your name:")
 chemistry=int(input("entre your marks:"))
@@ -41,7 +42,7 @@ else:
 
 
 
-
+#TASK3
 def add_task():
     task=input("enter your task :")
     task.append(task)
@@ -89,7 +90,7 @@ while True:
     else:
         print("invalid choice .please try again")
 
-
+#TASK 14
 
 print("temperature converter")
 print("1.celsius to fahrenheit")

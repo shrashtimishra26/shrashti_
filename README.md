@@ -156,6 +156,42 @@ print("total price :",subtotal)
 
 print("____THANK YOU FOR SHOPPING____")
 
+#TASK16
+name=input("student name :")
+age=int(input("enter your  age :"))
+rollnumber =int(input("enter your roll number :"))
+collagename=input("enter your  collage name :")
+
+print("name:",name )
+print("age:",age)
+print("roll number:",rollnumber)
+print("collage name :",collagename)
+def create_report():
+  try:
+
+    file=open('student_report.txt','w')
+    file.write("student report \n")
+    file.write("name"+name+"\n")
+    file.write("age:"+str(age)+"\n")
+    file.write("collage name:"+collagename+'\n')
+    file.close()
+    print("report  created  successfully!")
+    logging.info("report crested successfully! ")
+
+  except Exception as e:
+    print("report creation failed1")
+    logging.error("report failed:",+str(e))
+logging.basicConfig(
+  filename="execuation.log"'
+  level=logging.INFO
+)
+schedule.every(1).minutes.do(create_report)
+print("job started...")
+print('report will be created every 1 minute.')
+while True :
+  schedule .rum_pending()
+  time.sleep(1)
+
 
 
 

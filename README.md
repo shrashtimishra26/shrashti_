@@ -193,6 +193,52 @@ while True :
   time.sleep(1)
 
 
+  #TASK 18
+  import re
+import time
+import logging
+Log_FILE="app.log"
+ERROE_THRESHOLD=3
+CHECK_INTERVAL=2
+logging basicConfig(
+    filename="alert.log"
+    level=logging.WARNING,
+    format="%(asctime)s-%(levelname)s-%(message)s"
+)
+ERROR_PATTERN=re.compile(
+    r"(ERRORICAITICALEXCEPTION)",
+    re.IGNORECASE
+)
+def monitor_log():
+    error_count=0
+
+    print("Log monitoring started...")
+    print("monitoring:",Log_FILE)
+    with open(Log_FILE"r")as file:
+       file.seek(0,2)
+       while True:
+           line=file.readline()
+           if not line:
+               time.sleep(CHECK_INTERVAL)
+               continue
+           line=line.strip()
+           if ERROR_PATTERN.search(line):
+               error_count+=1
+               print("ERROR detected:",line)
+               if error_count>=ERROE_THRESHOLD:
+                   message=(
+                       f"ALERT! error thershold crossed."
+                       f"total errors:(error_count)"
+                   )
+                   print(message)
+                   logging.warning(message)
+                   error_count=0
+if __name__=="__main__":
+    monitor_log()
+   
+
+
+
 
 
 

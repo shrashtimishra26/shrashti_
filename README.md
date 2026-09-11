@@ -237,7 +237,214 @@ if __name__=="__main__":
     monitor_log()
    
 
+#TASK 19
+from fastapi import FastAPI
+app = FastAPI()
+@app.get('/')
+def home():
+    return{'message':"Task managment API is working!"}
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker,declarative_base
+DATABASE_URL="sqlite:///./tasks.db"
+engine = create_engine(
+    DATABASE_URL
+    connect_args={"check_same_thread":False}
+)
+SessionLocal =sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+Base=declarative_base()
+from sqlalchemy import column ,Integer,String,Boolean,ForeignKey
+from databas import Base
+class User(Base):
+    __tablename__="users"
+    id=column(Integer,primary_key=True,index=True)
+    username=column(String.unique=True,index=True)
+    password=column(String)
+class Task(Base):
+    __tablename__="tasks"
+    id=column(Integer,primary_key=True,index=True)
+    tital=column(String)
+    description=column(string)
+    completed=column(Boolean,default=False)
+    User_id=column(Integer,ForeignKey('user.id'))
 
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+
+from database import engine, SessionLocal
+from models import Base, User
+
+app = FastAPI()
+
+
+Base.metadata.create_all(bind=engine)
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@app.get("/")
+def home():
+    return {"message": "Task Management API is working!"}
+
+
+@app.post("/register")
+def register(username: str, password: str, db: Session = Depends(get_db)):
+
+    existing_user = db.query(User).filter(User.username == username).first()
+
+    if existing_user:
+        return {"message": "Username already exists"}
+
+    new_user = User(
+        username=username,
+        password=password
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return {
+        "message": "User registered successfully",
+        "username": new_user.username
+    }
+from datetime import datetime, timedelta
+from jose import jwt
+
+SECRET_KEY = "my-secret-key"
+ALGORITHM = "HS256"
+
+
+def create_token(username):
+    expire = datetime.utcnow() + timedelta(minutes=30)
+
+    data = {
+        "sub": username,
+        "exp": expire
+    }
+
+    token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+
+    return token
+
+from auth import create_token
+
+
+@app.post("/login")
+def login(username: str, password: str, db: Session = Depends(get_db)):
+
+    user = db.query(User).filter(User.username == username).first()
+
+    if not user:
+        return {"message": "User not found"}
+
+    if user.password != password:
+        return {"message": "Incorrect password"}
+
+    token = create_token(user.username)
+
+    return {
+        "message": "Login successful",
+        "access_token": token
+    }
+# Create Task
+@app.post("/tasks")
+def create_task(
+    title: str,
+    description: str,
+    username: str,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.username == username).first()
+
+    if not user:
+        return {"message": "User not found"}
+
+    new_task = Task(
+        title=title,
+        description=description,
+        user_id=user.id
+    )
+
+    db.add(new_task)
+    db.commit()
+    db.refresh(new_task)
+
+    return {
+        "message": "Task created successfully",
+        "task_id": new_task.id
+    }
+
+
+# Get User Tasks
+@app.get("/tasks")
+def get_tasks(username: str, db: Session = Depends(get_db)):
+
+    user = db.query(User).filter(User.username == username).first()
+
+    if not user:
+        return {"message": "User not found"}
+
+    tasks = db.query(Task).filter(Task.user_id == user.id).all()
+
+    return tasks
+
+
+# Update Task
+@app.put("/tasks/{task_id}")
+def update_task(
+    task_id: int,
+    title: str,
+    description: str,
+    username: str,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.username == username).first()
+
+    task = db.query(Task).filter(
+        Task.id == task_id,
+        Task.user_id == user.id
+    ).first()
+
+    if not task:
+        return {"message": "Task not found"}
+
+    task.title = title
+    task.description = description
+
+    db.commit()
+
+    return {"message": "Task updated successfully"}
+
+
+# Delete Task
+@app.delete("/tasks/{task_id}")
+def delete_task(
+    task_id: int,
+    username: str,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.username == username).first()
+
+    task = db.query(Task).filter(
+        Task.id == task_id,
+        Task.user_id == user.id
+    ).first()
+
+    if not task:
+        return {"message": "Task not found"}
+
+    db.delete(task)
+    db.commit()
+
+    return {"message": "Task deleted successfully"}
 
 
 

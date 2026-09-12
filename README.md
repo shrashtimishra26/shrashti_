@@ -447,6 +447,50 @@ def delete_task(
     return {"message": "Task deleted successfully"}
 
 
+    #TASK 20
+    from fastapi import FastAPI,Request
+from fastapi.responses import JSONResponse
+import time 
+app = FastAPI()
+LIMIT=5
+WINDOW=60
+requests={}
+@app.get("/")
+def home():
+    return {"message":"Rate limiting API is running"}
+@app.get("/data")
+def get_data(request:Request):
+    client_ip=request.client.host
+    current_time=time.time()
+    if client_ip not in requests:
+        requests[client_ip]={
+            "count":1,
+            "start_time":current_time
+        }
+        return {"message":"Request sucessful"}
+    client_data= requests[client_ip]
+    if current_time-client_data["start_time"]>=WINDOW:
+        client_data["count"]=1
+        client_data["start_time"]=current_time
+        return{"message":'Request sucessful'}
+    if client_data["count"]>=LIMIT:
+        return JSONResponse(
+            status_code=429,
+            content={
+                'error':'too many requests',
+                'message':'Rate limit exceeded . Try again later.'
+            }
+
+        )
+    client_data['count']+=1
+    return{
+        'message':'Request sucessful',
+        'requests_used':client_data['count'],
+        'limit':"LIMIT"
+    }
+
+
+
 
 
 

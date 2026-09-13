@@ -491,7 +491,58 @@ def get_data(request:Request):
         'limit':"LIMIT"
     }
 
+# TASK 21
+from fastapi import FastAPI
+import redis 
+import time 
+import json 
+app = FastAPI()
+r = redis.Redis(
+    host='localhot',
+    port=6379,
+    decode_responses=True
+)
+def get_data_from_database(item_id):
+    time.sleep(2)
+    return(
+        "id":item_id,
+        "name":"student",
+        "course":"AI",
+        "message":"data fetched from database"
+    )
+@app.get("/data/{item_id}")
+def get_data(item_id:int):
+    start_time=time.time()
+    cached_data=r.get(f"item:(item_id)")
+    if cached_data:
+        data=json.loads(cached_data)
+        source="CACHE"
+    else:
+        data =get_data_from_database(item_id)
+        source ="DATABASE"
 
+        r.setex(
+            f"item:{item_id}",
+            60,json.dumps(data)
+        
+        )
+        end_time=time.time()
+        return {
+            "data":data,
+            "source":source,
+            "response_time":round(end_time-start_time,4)
+
+        }
+    @app.delete("/cache/{item_id}")
+    def delete_cache(item_id:int):
+        deleted=r.delete(f"item:{item_id}")
+        if deleted:
+            return{
+                "message":"cache dleted sucessfully "
+                }
+        return{
+            'message':"caches was not found "
+        }
 
 
 

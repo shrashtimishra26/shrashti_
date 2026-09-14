@@ -1,4 +1,6 @@
 #TASK 1
+
+
  num=int(input(" entre your number:"))
 if num%2==0:
     print("even number")
@@ -9,6 +11,9 @@ else :
     print("odd number")
 
 #TASK 2
+
+
+
 print("====student grades calculator====")
 name=input("entre your name:")
 chemistry=int(input("entre your marks:"))
@@ -43,6 +48,9 @@ else:
 
 
 #TASK3
+
+
+
 def add_task():
     task=input("enter your task :")
     task.append(task)
@@ -92,6 +100,7 @@ while True:
 
 #TASK 14
 
+
 print("temperature converter")
 print("1.celsius to fahrenheit")
 print("2.fahrenheit to celsius")
@@ -121,6 +130,10 @@ else:
     print("Invalid choice")
 
    #TASK 15 
+
+
+
+   
    print("===SHOPPING  BILL===")
 coustmer=input("enter coustmer name:")
 product1=input("enter product name :")
@@ -157,6 +170,9 @@ print("total price :",subtotal)
 print("____THANK YOU FOR SHOPPING____")
 
 #TASK16
+
+
+
 name=input("student name :")
 age=int(input("enter your  age :"))
 rollnumber =int(input("enter your roll number :"))
@@ -194,6 +210,9 @@ while True :
 
 
   #TASK 18
+
+
+  
   import re
 import time
 import logging
@@ -238,6 +257,10 @@ if __name__=="__main__":
    
 
 #TASK 19
+
+
+
+
 from fastapi import FastAPI
 app = FastAPI()
 @app.get('/')
@@ -492,6 +515,9 @@ def get_data(request:Request):
     }
 
 # TASK 21
+
+
+
 from fastapi import FastAPI
 import redis 
 import time 

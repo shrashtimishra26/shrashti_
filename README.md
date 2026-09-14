@@ -547,31 +547,53 @@ def get_data(item_id:int):
 
 
 
+#TASK 22
+from celery import celery 
+import time 
+celery_app=celery(
+    "worker",
+    broker="redis://localhost:6379/0",
+    backend="redis://localhost:6379/0"
 
+)
+@celery_app.task
+def process_job(job_id):
+    print(f"job(job_id)started")
+    time.sleep(10)
+    print(f"job(jon_id)completed")
+    return f"job(job_id)completed sucessfully"
+from fastapi import FastAPI
+from worker import process_job
+app=FastAPI()
+@app.get("/")
+def home():
+    return{
+        'message':'Background job processer is running'
+    }
+@app.post("/submit")
+def submit_job():
+    task=process_job.delay('job-1')
+    return{
+        "job_id":task.id
+        "message":"job submitted sucessfully "
+    }
+@app.get("/status/{job_id}")
+def check_status(job_id:str):
+    task=process_job.AsyncResult(job_id)
+    if task.state=="PENDING":
+        status="PENDING"
+    elif task.state=="STATRTED":
+        status="Running "
+    elif task.state=="FAILURE":
+        status="failed"
+    else:
+        status=task.state
+    return{
+        "job_id":job_id,
+        "status":status,
+        "result":task.result if task.state=="sucess"else none 
 
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
-
-
-     
-
-
- 
-
-
- num=int(input("enter your number::"))
+    }
 for i in range(1,11):
     print(num,"x" ,i,"=" ,num*i)
    

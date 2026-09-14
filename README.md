@@ -548,6 +548,11 @@ def get_data(item_id:int):
 
 
 #TASK 22
+
+
+
+
+
 from celery import celery 
 import time 
 celery_app=celery(

@@ -625,8 +625,74 @@ def check_status(job_id:str):
         "result":task.result if task.state=="sucess"else none 
 
     }
-for i in range(1,11):
-    print(num,"x" ,i,"=" ,num*i)
+
    
 
-#    
+#    TASK 23
+
+
+import requests
+import time
+from concurrent.futures import ThreadPoolExecutor
+
+
+def check_url(url):
+    try:
+        start_time = time.time()
+
+        response = requests.get(url, timeout=5)
+
+        end_time = time.time()
+
+        response_time = end_time - start_time
+
+        return {
+            "url": url,
+            "status": response.status_code,
+            "response_time": response_time,
+            "success": True
+        }
+
+    except requests.RequestException as e:
+        return {
+            "url": url,
+            "status": "Failed",
+            "response_time": None,
+            "success": False,
+            "error": str(e)
+        }
+
+
+# URLs to check
+urls = [
+    "https://www.google.com",
+    "https://www.github.com",
+    "https://www.python.org",
+    "https://www.wikipedia.org",
+    "https://example.com"
+]
+
+
+# Create threads
+with ThreadPoolExecutor(max_workers=5) as executor:
+
+    results = executor.map(check_url, urls)
+
+
+# Display report
+print("\n========== URL CHECKER REPORT ==========\n")
+
+for result in results:
+
+    print("URL:", result["url"])
+
+    if result["success"]:
+        print("Status Code:", result["status"])
+        print("Response Time:",
+              round(result["response_time"], 3), "seconds")
+
+    else:
+        print("Status:", result["status"])
+        print("Error:", result["error"])
+
+    print("----------------------------------------")

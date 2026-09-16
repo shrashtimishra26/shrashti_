@@ -691,6 +691,58 @@ for result in results:
         print("Response Time:",
               round(result["response_time"], 3), "seconds")
 
+
+
+
+  #TASK 22
+
+import threading
+import _multiprocessing
+import asyncio
+import time 
+def thread_task(task_number):
+    print(f'thread task{task_number}started')
+    time.sleep(2)
+    print (f'thread task{task_number}completed')
+def run_threading():
+    print("\n---THREADING---")
+    start=time.time()
+    threads=[]
+    for i in range(1,6):
+        t=threading.Thread(target=thread_task,args=(i,))
+        threads.append(t)
+        t.start()
+    for t in threads:
+        t.join()
+    end=time.time()
+    print("threading time:",round(end-start,2),"seconds")
+async def async_task(task_number):
+    print(f'Async Task{task_number}completed')
+async def run_asyncio():
+    print("\n---ASYNCIO---")
+    start=time.time()
+    print("AsyncIO Time:",round(end-start,2),"seconds")
+def cpu_task(number):
+    total=0
+    for i in range(1,5_000_000):
+        total+=i*i
+    return total 
+def run_multiprocessing():
+    print('\n---_multiprocessing---')
+    start=time.time()
+    with multiprocessing.Pool(processes=4)as pool:
+        results=pool.map(cpu_task,range(4))
+    end=time.time()
+    print("Multiprocessing Time: ",round(end-start,2),'seconds')
+if__name__=="__main__":
+    run_threading()
+    asyncio.run(run_asyncio())
+    run_multiprocessing()
+    print("\n---COMPARISON COMPLETED---")
+
+
+  
+
     else:
         print("Status:", result["status"])
         print("Error:", result["error"])

@@ -694,7 +694,7 @@ for result in results:
 
 
 
-  #TASK 22
+  #TASK 25
 
 import threading
 import _multiprocessing
@@ -741,6 +741,9 @@ if__name__=="__main__":
     print("\n---COMPARISON COMPLETED---")
 
 
+
+
+
   
 
     else:
@@ -748,3 +751,211 @@ if__name__=="__main__":
         print("Error:", result["error"])
 
     print("----------------------------------------")
+
+
+    # TASK 27
+
+
+    import pandas as pd
+import numpy as np
+
+
+# -----------------------------------
+# 1. LOAD DATASET
+# -----------------------------------
+
+file_name = input("Enter CSV file name: ")
+
+try:
+    df = pd.read_csv(file_name)
+except FileNotFoundError:
+    print("File not found! Please check the file name.")
+    exit()
+
+
+print("\n====================================")
+print("       DATA QUALITY REPORT")
+print("====================================")
+
+
+# -----------------------------------
+# 2. BASIC INFORMATION
+# -----------------------------------
+
+print("\n--- BASIC INFORMATION ---")
+
+print("Number of rows:", df.shape[0])
+print("Number of columns:", df.shape[1])
+
+print("\nColumn names:")
+for column in df.columns:
+    print("-", column)
+
+
+# -----------------------------------
+# 3. DATA TYPES
+# -----------------------------------
+
+print("\n--- DATA TYPES ---")
+
+print(df.dtypes)
+
+
+# -----------------------------------
+# 4. MISSING VALUES
+# -----------------------------------
+
+print("\n--- MISSING VALUES ---")
+
+missing_values = df.isnull().sum()
+
+for column in df.columns:
+    print(column, ":", missing_values[column])
+
+
+# -----------------------------------
+# 5. DUPLICATE RECORDS
+# -----------------------------------
+
+print("\n--- DUPLICATE RECORDS ---")
+
+duplicates = df.duplicated().sum()
+
+print("Total duplicate rows:", duplicates)
+
+
+# -----------------------------------
+# 6. UNIQUE VALUES
+# -----------------------------------
+
+print("\n--- UNIQUE VALUE COUNTS ---")
+
+for column in df.columns:
+    print(column, ":", df[column].nunique())
+
+
+# -----------------------------------
+# 7. COMPLETENESS
+# -----------------------------------
+
+print("\n--- COMPLETENESS ---")
+
+total_values = df.size
+missing_total = df.isnull().sum().sum()
+
+completeness = ((total_values - missing_total) / total_values) * 100
+
+print("Completeness:", round(completeness, 2), "%")
+
+
+# -----------------------------------
+# 8. UNIQUENESS
+# -----------------------------------
+
+print("\n--- UNIQUENESS ---")
+
+for column in df.columns:
+
+    unique_count = df[column].nunique()
+    total_count = len(df)
+
+    uniqueness = (unique_count / total_count) * 100
+
+    print(
+        column,
+        ":",
+        round(uniqueness, 2),
+        "%"
+    )
+
+
+# -----------------------------------
+# 9. INVALID / UNEXPECTED DATA TYPES
+# -----------------------------------
+
+print("\n--- DATA TYPE CHECK ---")
+
+for column in df.columns:
+
+    if df[column].dtype == "object":
+
+        print(
+            column,
+            "-> Text/String data"
+        )
+
+    elif np.issubdtype(df[column].dtype, np.number):
+
+        print(
+            column,
+            "-> Numeric data"
+        )
+
+    else:
+
+        print(
+            column,
+            "-> Unexpected data type"
+        )
+
+
+# -----------------------------------
+# 10. SUSPICIOUS RECORDS
+# -----------------------------------
+
+print("\n--- SUSPICIOUS RECORDS ---")
+
+numeric_columns = df.select_dtypes(
+    include=np.number
+).columns
+
+
+if len(numeric_columns) > 0:
+
+    for column in numeric_columns:
+
+        mean = df[column].mean()
+        std = df[column].std()
+
+        # Values far away from normal range
+        suspicious = df[
+            (df[column] > mean + 3 * std) |
+            (df[column] < mean - 3 * std)
+        ]
+
+        print(
+            column,
+            "-> Suspicious records:",
+            len(suspicious)
+        )
+
+else:
+
+    print("No numeric columns found.")
+
+
+# -----------------------------------
+# 11. SAVE REPORT
+# -----------------------------------
+
+report = pd.DataFrame({
+    "Column": df.columns,
+    "Data Type": df.dtypes.astype(str),
+    "Missing Values": df.isnull().sum().values,
+    "Unique Values": [
+        df[column].nunique()
+        for column in df.columns
+    ]
+})
+
+
+report.to_csv(
+    "data_quality_report.csv",
+    index=False
+)
+
+
+print("\n====================================")
+print("Report generated successfully!")
+print("File: data_quality_report.csv")
+print("====================================")

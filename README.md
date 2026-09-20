@@ -959,3 +959,194 @@ print("\n====================================")
 print("Report generated successfully!")
 print("File: data_quality_report.csv")
 print("====================================")
+
+
+#TASK 28
+import pandas as pd
+from difflib import SequenceMatcher
+import re
+
+# -------------------------------------------------
+# 1. LOAD DATASET
+# -------------------------------------------------
+
+input_file = "customers.csv"
+
+df = pd.read_csv(input_file)
+
+print("Original Dataset:")
+print(df)
+print("\nTotal records:", len(df))
+
+
+# -------------------------------------------------
+# 2. TEXT NORMALIZATION
+# -------------------------------------------------
+
+def normalize_text(text):
+    if pd.isna(text):
+        return ""
+
+    text = str(text).lower()
+    
+    # Remove extra spaces
+    text = re.sub(r"\s+", " ", text)
+    
+    # Remove special characters
+    text = re.sub(r"[^a-z0-9 ]", "", text)
+    
+    return text.strip()
+
+
+# Normalize important fields
+
+df["name_clean"] = df["name"].apply(normalize_text)
+df["email_clean"] = df["email"].apply(normalize_text)
+df["phone_clean"] = df["phone"].apply(normalize_text)
+
+
+# -------------------------------------------------
+# 3. EXACT DUPLICATE DETECTION
+# -------------------------------------------------
+
+exact_duplicates = df[
+    df.duplicated(
+        subset=["name_clean", "email_clean", "phone_clean"],
+        keep=False
+    )
+]
+
+print("\nExact Duplicates:")
+print(exact_duplicates)
+
+
+# Save exact duplicate report
+
+exact_duplicates.to_csv(
+    "exact_duplicate_report.csv",
+    index=False
+)
+
+
+# -------------------------------------------------
+# 4. FUZZY MATCHING FUNCTION
+# -------------------------------------------------
+
+def similarity(text1, text2):
+    return SequenceMatcher(
+        None,
+        str(text1),
+        str(text2)
+    ).ratio()
+
+
+# -------------------------------------------------
+# 5. FIND POTENTIAL DUPLICATES
+# -------------------------------------------------
+
+potential_duplicates = []
+
+for i in range(len(df)):
+
+    for j in range(i + 1, len(df)):
+
+        name_score = similarity(
+            df.loc[i, "name_clean"],
+            df.loc[j, "name_clean"]
+        )
+
+        email_score = similarity(
+            df.loc[i, "email_clean"],
+            df.loc[j, "email_clean"]
+        )
+
+        phone_score = similarity(
+            df.loc[i, "phone_clean"],
+            df.loc[j, "phone_clean"]
+        )
+
+        # Calculate average similarity
+        average_score = (
+            name_score +
+            email_score +
+            phone_score
+        ) / 3
+
+        # Potential duplicate condition
+        if average_score >= 0.75:
+
+            potential_duplicates.append({
+                "record_1": i,
+                "record_2": j,
+                "name_similarity": round(name_score, 2),
+                "email_similarity": round(email_score, 2),
+                "phone_similarity": round(phone_score, 2),
+                "average_similarity": round(average_score, 2)
+            })
+
+
+# Convert result to DataFrame
+
+potential_df = pd.DataFrame(
+    potential_duplicates
+)
+
+
+# -------------------------------------------------
+# 6. SAVE POTENTIAL DUPLICATE REPORT
+# -------------------------------------------------
+
+potential_df.to_csv(
+    "potential_duplicate_report.csv",
+    index=False
+)
+
+print("\nPotential Duplicates:")
+print(potential_df)
+
+
+# -------------------------------------------------
+# 7. CREATE CLEANED DATASET
+# -------------------------------------------------
+
+# Remove exact duplicates
+cleaned_df = df.drop_duplicates(
+    subset=["name_clean", "email_clean", "phone_clean"],
+    keep="first"
+)
+
+# Remove helper columns
+cleaned_df = cleaned_df.drop(
+    columns=[
+        "name_clean",
+        "email_clean",
+        "phone_clean"
+    ]
+)
+
+# Save cleaned dataset
+
+cleaned_df.to_csv(
+    "cleaned_dataset.csv",
+    index=False
+)
+
+
+# -------------------------------------------------
+# 8. FINAL OUTPUT
+# -------------------------------------------------
+
+print("\n--------------------------------")
+print("DUPLICATE DETECTION COMPLETED")
+print("--------------------------------")
+
+print("Original records :", len(df))
+print("Cleaned records  :", len(cleaned_df))
+print("Exact duplicates :", len(exact_duplicates))
+print("Potential pairs  :", len(potential_df))
+
+print("\nFiles created:")
+print("1. exact_duplicate_report.csv")
+print("2. potential_duplicate_report.csv")
+print("3. cleaned_dataset.csv")
+

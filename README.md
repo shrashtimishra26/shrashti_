@@ -1150,3 +1150,186 @@ print("1. exact_duplicate_report.csv")
 print("2. potential_duplicate_report.csv")
 print("3. cleaned_dataset.csv")
 
+
+
+
+
+
+# TASK 29
+
+
+
+
+
+
+import pandas as pd
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle
+)
+
+
+# -------------------------------
+# STEP 1: Create sample dataset
+# -------------------------------
+
+data = {
+    "Product": ["Laptop", "Mobile", "Tablet", "Monitor", "Keyboard"],
+    "Sales": [50, 80, 40, 30, 70],
+    "Revenue": [250000, 160000, 120000, 90000, 35000],
+    "Region": ["North", "South", "East", "West", "North"]
+}
+
+df = pd.DataFrame(data)
+
+
+# -------------------------------
+# STEP 2: Handle missing data
+# -------------------------------
+
+df = df.fillna(0)
+
+
+# -------------------------------
+# STEP 3: Calculate summary metrics
+# -------------------------------
+
+total_sales = df["Sales"].sum()
+total_revenue = df["Revenue"].sum()
+average_sales = df["Sales"].mean()
+average_revenue = df["Revenue"].mean()
+
+highest_sales_product = df.loc[df["Sales"].idxmax(), "Product"]
+
+
+# -------------------------------
+# STEP 4: Create PDF
+# -------------------------------
+
+pdf_file = "business_report.pdf"
+
+document = SimpleDocTemplate(
+    pdf_file,
+    pagesize=A4,
+    rightMargin=40,
+    leftMargin=40,
+    topMargin=40,
+    bottomMargin=40
+)
+
+
+# Styles
+styles = getSampleStyleSheet()
+
+title_style = ParagraphStyle(
+    "TitleStyle",
+    parent=styles["Title"],
+    alignment=TA_CENTER,
+    fontSize=20,
+    spaceAfter=20
+)
+
+heading_style = ParagraphStyle(
+    "HeadingStyle",
+    parent=styles["Heading2"],
+    spaceBefore=10,
+    spaceAfter=10
+)
+
+
+content = []
+
+
+# -------------------------------
+# STEP 5: Add title
+# -------------------------------
+
+content.append(
+    Paragraph("Business Sales Report", title_style)
+)
+
+content.append(Spacer(1, 10))
+
+
+# -------------------------------
+# STEP 6: Add summary
+# -------------------------------
+
+content.append(
+    Paragraph("Summary Metrics", heading_style)
+)
+
+summary_data = [
+    ["Metric", "Value"],
+    ["Total Sales", str(total_sales)],
+    ["Total Revenue", f"₹{total_revenue:,.2f}"],
+    ["Average Sales", f"{average_sales:.2f}"],
+    ["Average Revenue", f"₹{average_revenue:,.2f}"],
+    ["Highest Sales Product", highest_sales_product]
+]
+
+
+summary_table = Table(summary_data, colWidths=[220, 180])
+
+summary_table.setStyle(
+    TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("GRID", (0, 0), (-1, -1), 1, colors.black),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+        ("TOPPADDING", (0, 0), (-1, 0), 8),
+    ])
+)
+
+content.append(summary_table)
+
+content.append(Spacer(1, 25))
+
+
+# -------------------------------
+# STEP 7: Add business data table
+# -------------------------------
+
+content.append(
+    Paragraph("Business Data", heading_style)
+)
+
+table_data = [df.columns.tolist()] + df.astype(str).values.tolist()
+
+data_table = Table(table_data, colWidths=[100, 80, 100, 100])
+
+data_table.setStyle(
+    TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("GRID", (0, 0), (-1, -1), 1, colors.black),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+    ])
+)
+
+content.append(data_table)
+
+content.append(Spacer(1, 20))
+
+
+# -------------------------------
+# STEP 8: Generate PDF
+# -------------------------------
+
+document.build(content)
+
+print("PDF report generated successfully!")
+print("File name:", pdf_file)

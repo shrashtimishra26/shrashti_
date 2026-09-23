@@ -1333,3 +1333,111 @@ document.build(content)
 
 print("PDF report generated successfully!")
 print("File name:", pdf_file)
+
+
+
+
+# task 21 
+
+
+
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from pathlib import Path
+import uuid
+
+app = FastAPI(title="Secure File Upload API")
+
+# Upload folder
+UPLOAD_DIR = Path("uploads")
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+# Allowed file types
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".pdf", ".txt"}
+
+# Maximum file size = 5 MB
+MAX_FILE_SIZE = 5 * 1024 * 1024
+
+
+@app.get("/")
+def home():
+    return {
+        "message": "Secure File Upload API is running"
+    }
+
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+
+    # 1. Check filename
+    if not file.filename:
+        raise HTTPException(
+            status_code=400,
+            detail="Filename is missing"
+        )
+
+    # 2. Get extension
+    extension = Path(file.filename).suffix.lower()
+
+    # 3. Check allowed file type
+    if extension not in ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=400,
+            detail="File type not allowed"
+        )
+
+    # 4. Generate safe filename
+    # Never directly trust user's filename
+    safe_filename = f"{uuid.uuid4()}{extension}"
+
+    file_path = UPLOAD_DIR / safe_filename
+
+    total_size = 0
+
+    try:
+        # 5. Save file in chunks
+        with open(file_path, "wb") as buffer:
+
+            while True:
+                chunk = await file.read(1024 * 1024)  # 1 MB
+
+                if not chunk:
+                    break
+
+                total_size += len(chunk)
+
+                # 6. Check file size
+                if total_size > MAX_FILE_SIZE:
+                    buffer.close()
+
+                    if file_path.exists():
+                        file_path.unlink()
+
+                    raise HTTPException(
+                        status_code=413,
+                        detail="File size exceeds 5 MB limit"
+                    )
+
+                buffer.write(chunk)
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        if file_path.exists():
+            file_path.unlink()
+
+        raise HTTPException(
+            status_code=500,
+            detail="Error while uploading file"
+        )
+
+    finally:
+        await file.close()
+
+    return {
+        "message": "File uploaded successfully",
+        "original_filename": file.filename,
+        "saved_filename": safe_filename,
+        "file_size": total_size,
+        "file_type": extension
+    }

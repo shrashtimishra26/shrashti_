@@ -1441,3 +1441,250 @@ async def upload_file(file: UploadFile = File(...)):
         "file_size": total_size,
         "file_type": extension
     }
+
+
+
+
+# MAJOR  PROJECT 1 
+
+
+
+# Student Result & Grade Management System
+
+students = {}
+
+
+# -----------------------------
+# Grade Calculation
+# -----------------------------
+def calculate_grade(marks):
+    if marks >= 90:
+        return "A+"
+    elif marks >= 80:
+        return "A"
+    elif marks >= 70:
+        return "B"
+    elif marks >= 60:
+        return "C"
+    elif marks >= 50:
+        return "D"
+    else:
+        return "F"
+
+
+# -----------------------------
+# Add Student
+# -----------------------------
+def add_student():
+    roll_no = input("Enter Roll Number: ")
+
+    if roll_no in students:
+        print("Student already exists!")
+        return
+
+    name = input("Enter Student Name: ")
+    branch = input("Enter Branch: ")
+
+    subjects = {}
+
+    n = int(input("Enter number of subjects: "))
+
+    for i in range(n):
+        subject = input(f"Enter subject {i + 1} name: ")
+        marks = float(input(f"Enter marks in {subject}: "))
+
+        subjects[subject] = marks
+
+    students[roll_no] = {
+        "name": name,
+        "branch": branch,
+        "subjects": subjects
+    }
+
+    print("Student added successfully!")
+
+
+# -----------------------------
+# View Student
+# -----------------------------
+def view_student():
+    roll_no = input("Enter Roll Number: ")
+
+    if roll_no not in students:
+        print("Student not found!")
+        return
+
+    student = students[roll_no]
+
+    print("\n------ Student Details ------")
+    print("Roll Number:", roll_no)
+    print("Name:", student["name"])
+    print("Branch:", student["branch"])
+
+    total = 0
+
+    print("\nSubject        Marks       Grade")
+
+    for subject, marks in student["subjects"].items():
+        grade = calculate_grade(marks)
+        print(f"{subject:<15} {marks:<10} {grade}")
+        total += marks
+
+    number_of_subjects = len(student["subjects"])
+    percentage = total / number_of_subjects
+
+    print("\nTotal Marks:", total)
+    print("Percentage:", percentage)
+    print("Overall Grade:", calculate_grade(percentage))
+
+
+# -----------------------------
+# Update Student
+# -----------------------------
+def update_student():
+    roll_no = input("Enter Roll Number: ")
+
+    if roll_no not in students:
+        print("Student not found!")
+        return
+
+    student = students[roll_no]
+
+    print("\n1. Update Name")
+    print("2. Update Branch")
+    print("3. Update Subject Marks")
+
+    choice = input("Enter choice: ")
+
+    if choice == "1":
+        student["name"] = input("Enter new name: ")
+        print("Name updated successfully!")
+
+    elif choice == "2":
+        student["branch"] = input("Enter new branch: ")
+        print("Branch updated successfully!")
+
+    elif choice == "3":
+        subject = input("Enter subject name: ")
+
+        if subject in student["subjects"]:
+            marks = float(input("Enter new marks: "))
+            student["subjects"][subject] = marks
+            print("Marks updated successfully!")
+        else:
+            print("Subject not found!")
+
+    else:
+        print("Invalid choice!")
+
+
+# -----------------------------
+# Search Student
+# -----------------------------
+def search_student():
+    keyword = input("Enter name or roll number: ").lower()
+
+    found = False
+
+    for roll_no, student in students.items():
+
+        if (keyword in roll_no.lower() or
+                keyword in student["name"].lower()):
+
+            print("\n-------------------")
+            print("Roll Number:", roll_no)
+            print("Name:", student["name"])
+            print("Branch:", student["branch"])
+
+            found = True
+
+    if not found:
+        print("No student found!")
+
+
+# -----------------------------
+# Performance Summary
+# -----------------------------
+def performance_summary():
+    if len(students) == 0:
+        print("No student records available!")
+        return
+
+    print("\n====== Performance Summary ======")
+
+    total_students = len(students)
+    passed = 0
+    failed = 0
+
+    highest_percentage = -1
+    top_student = ""
+
+    for roll_no, student in students.items():
+
+        total = sum(student["subjects"].values())
+        count = len(student["subjects"])
+
+        percentage = total / count
+
+        if percentage >= 50:
+            passed += 1
+        else:
+            failed += 1
+
+        if percentage > highest_percentage:
+            highest_percentage = percentage
+            top_student = student["name"]
+
+    print("Total Students:", total_students)
+    print("Passed Students:", passed)
+    print("Failed Students:", failed)
+
+    print("Top Student:", top_student)
+    print("Highest Percentage:", highest_percentage)
+
+
+# -----------------------------
+# Main Menu
+# -----------------------------
+def main():
+
+    while True:
+
+        print("\n================================")
+        print(" STUDENT RESULT MANAGEMENT SYSTEM")
+        print("================================")
+
+        print("1. Add Student")
+        print("2. View Student")
+        print("3. Update Student")
+        print("4. Search Student")
+        print("5. Performance Summary")
+        print("6. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            add_student()
+
+        elif choice == "2":
+            view_student()
+
+        elif choice == "3":
+            update_student()
+
+        elif choice == "4":
+            search_student()
+
+        elif choice == "5":
+            performance_summary()
+
+        elif choice == "6":
+            print("Thank you!")
+            break
+
+        else:
+            print("Invalid choice! Please try again.")
+
+
+# Program starts here
+main()

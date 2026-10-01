@@ -1688,3 +1688,448 @@ def main():
 
 # Program starts here
 main()
+
+
+
+
+
+
+
+#  MAJOR PROJECT 2 
+
+
+
+import json
+import os
+from datetime import datetime
+
+
+DATA_FILE = "veda_data.json"
+
+
+# -----------------------------
+# DATA HANDLING
+# -----------------------------
+
+def load_data():
+    """Load data from JSON file."""
+
+    if not os.path.exists(DATA_FILE):
+        return {
+            "services": [],
+            "programs": [],
+            "customers": [],
+            "inquiries": []
+        }
+
+    try:
+        with open(DATA_FILE, "r") as file:
+            return json.load(file)
+
+    except (json.JSONDecodeError, FileNotFoundError):
+        return {
+            "services": [],
+            "programs": [],
+            "customers": [],
+            "inquiries": []
+        }
+
+
+def save_data(data):
+    """Save data into JSON file."""
+
+    with open(DATA_FILE, "w") as file:
+        json.dump(data, file, indent=4)
+
+    print("\nData saved successfully!")
+
+
+# -----------------------------
+# VALIDATION
+# -----------------------------
+
+def get_non_empty(prompt):
+    while True:
+        value = input(prompt).strip()
+
+        if value:
+            return value
+
+        print("This field cannot be empty.")
+
+
+def get_number(prompt):
+    while True:
+        value = input(prompt).strip()
+
+        if value.isdigit():
+            return int(value)
+
+        print("Please enter a valid number.")
+
+
+# -----------------------------
+# SERVICE MANAGEMENT
+# -----------------------------
+
+def add_service(data):
+
+    service = {
+        "id": len(data["services"]) + 1,
+        "name": get_non_empty("Enter service name: "),
+        "category": get_non_empty("Enter category: "),
+        "price": get_number("Enter price: "),
+        "status": "Active"
+    }
+
+    data["services"].append(service)
+    save_data(data)
+
+    print("Service added successfully!")
+
+
+def view_services(data):
+
+    if not data["services"]:
+        print("\nNo services available.")
+        return
+
+    print("\n========== SERVICES ==========")
+
+    for service in data["services"]:
+        print(
+            f"ID: {service['id']} | "
+            f"Name: {service['name']} | "
+            f"Category: {service['category']} | "
+            f"Price: ₹{service['price']} | "
+            f"Status: {service['status']}"
+        )
+
+
+def search_service(data):
+
+    keyword = input("Enter service name/category to search: ").lower()
+
+    found = False
+
+    for service in data["services"]:
+
+        if (keyword in service["name"].lower()
+                or keyword in service["category"].lower()):
+
+            print(
+                f"\nID: {service['id']}\n"
+                f"Name: {service['name']}\n"
+                f"Category: {service['category']}\n"
+                f"Price: ₹{service['price']}\n"
+                f"Status: {service['status']}"
+            )
+
+            found = True
+
+    if not found:
+        print("No matching service found.")
+
+
+# -----------------------------
+# PROGRAM MANAGEMENT
+# -----------------------------
+
+def add_program(data):
+
+    program_type = get_non_empty(
+        "Enter program type (Training/Internship/Technology): "
+    )
+
+    program = {
+        "id": len(data["programs"]) + 1,
+        "name": get_non_empty("Enter program name: "),
+        "type": program_type,
+        "duration": get_non_empty("Enter duration: "),
+        "status": "Open"
+    }
+
+    data["programs"].append(program)
+    save_data(data)
+
+    print("Program added successfully!")
+
+
+def view_programs(data):
+
+    if not data["programs"]:
+        print("\nNo programs available.")
+        return
+
+    print("\n========== PROGRAMS ==========")
+
+    for program in data["programs"]:
+
+        print(
+            f"ID: {program['id']} | "
+            f"Name: {program['name']} | "
+            f"Type: {program['type']} | "
+            f"Duration: {program['duration']} | "
+            f"Status: {program['status']}"
+        )
+
+
+def search_program(data):
+
+    keyword = input("Enter program name/type to search: ").lower()
+
+    found = False
+
+    for program in data["programs"]:
+
+        if (keyword in program["name"].lower()
+                or keyword in program["type"].lower()):
+
+            print(
+                f"\nID: {program['id']}\n"
+                f"Name: {program['name']}\n"
+                f"Type: {program['type']}\n"
+                f"Duration: {program['duration']}\n"
+                f"Status: {program['status']}"
+            )
+
+            found = True
+
+    if not found:
+        print("No matching program found.")
+
+
+# -----------------------------
+# CUSTOMER MANAGEMENT
+# -----------------------------
+
+def add_customer(data):
+
+    customer = {
+        "id": len(data["customers"]) + 1,
+        "name": get_non_empty("Enter customer name: "),
+        "email": get_non_empty("Enter email: "),
+        "phone": get_non_empty("Enter phone number: ")
+    }
+
+    data["customers"].append(customer)
+    save_data(data)
+
+    print("Customer added successfully!")
+
+
+def view_customers(data):
+
+    if not data["customers"]:
+        print("\nNo customers available.")
+        return
+
+    print("\n========== CUSTOMERS ==========")
+
+    for customer in data["customers"]:
+
+        print(
+            f"ID: {customer['id']} | "
+            f"Name: {customer['name']} | "
+            f"Email: {customer['email']} | "
+            f"Phone: {customer['phone']}"
+        )
+
+
+# -----------------------------
+# INQUIRY / SERVICE REQUEST
+# -----------------------------
+
+def add_inquiry(data):
+
+    inquiry = {
+        "id": len(data["inquiries"]) + 1,
+        "customer": get_non_empty("Enter customer name: "),
+        "subject": get_non_empty("Enter inquiry subject: "),
+        "description": get_non_empty("Enter description: "),
+        "status": "Pending",
+        "date": datetime.now().strftime("%Y-%m-%d")
+    }
+
+    data["inquiries"].append(inquiry)
+    save_data(data)
+
+    print("Inquiry added successfully!")
+
+
+def view_inquiries(data):
+
+    if not data["inquiries"]:
+        print("\nNo inquiries available.")
+        return
+
+    print("\n========== INQUIRIES ==========")
+
+    for inquiry in data["inquiries"]:
+
+        print(
+            f"\nID: {inquiry['id']}\n"
+            f"Customer: {inquiry['customer']}\n"
+            f"Subject: {inquiry['subject']}\n"
+            f"Description: {inquiry['description']}\n"
+            f"Status: {inquiry['status']}\n"
+            f"Date: {inquiry['date']}"
+        )
+
+
+def update_inquiry(data):
+
+    view_inquiries(data)
+
+    if not data["inquiries"]:
+        return
+
+    inquiry_id = get_number("\nEnter inquiry ID: ")
+
+    for inquiry in data["inquiries"]:
+
+        if inquiry["id"] == inquiry_id:
+
+            print("\n1. Pending")
+            print("2. In Progress")
+            print("3. Resolved")
+
+            choice = input("Enter status: ")
+
+            status = {
+                "1": "Pending",
+                "2": "In Progress",
+                "3": "Resolved"
+            }
+
+            if choice in status:
+                inquiry["status"] = status[choice]
+                save_data(data)
+                print("Inquiry status updated!")
+            else:
+                print("Invalid choice.")
+
+            return
+
+    print("Inquiry ID not found.")
+
+
+# -----------------------------
+# REPORTS
+# -----------------------------
+
+def generate_report(data):
+
+    total_services = len(data["services"])
+    total_programs = len(data["programs"])
+    total_customers = len(data["customers"])
+    total_inquiries = len(data["inquiries"])
+
+    pending = 0
+    resolved = 0
+
+    for inquiry in data["inquiries"]:
+
+        if inquiry["status"] == "Pending":
+            pending += 1
+
+        elif inquiry["status"] == "Resolved":
+            resolved += 1
+
+    print("\n================================")
+    print("       BUSINESS REPORT")
+    print("================================")
+
+    print("Total Services   :", total_services)
+    print("Total Programs   :", total_programs)
+    print("Total Customers  :", total_customers)
+    print("Total Inquiries  :", total_inquiries)
+    print("Pending Inquiries:", pending)
+    print("Resolved         :", resolved)
+
+    print("================================")
+
+
+# -----------------------------
+# MAIN MENU
+# -----------------------------
+
+def main():
+
+    data = load_data()
+
+    while True:
+
+        print("\n")
+        print("==========================================")
+        print(" VEDA TECHNOLOGY BUSINESS MANAGEMENT")
+        print("==========================================")
+
+        print("1. Add Service")
+        print("2. View Services")
+        print("3. Search Service")
+        print("4. Add Program")
+        print("5. View Programs")
+        print("6. Search Program")
+        print("7. Add Customer")
+        print("8. View Customers")
+        print("9. Add Customer Inquiry")
+        print("10. View Inquiries")
+        print("11. Update Inquiry Status")
+        print("12. Generate Business Report")
+        print("13. Exit")
+
+        choice = input("\nEnter your choice: ")
+
+        if choice == "1":
+            add_service(data)
+
+        elif choice == "2":
+            view_services(data)
+
+        elif choice == "3":
+            search_service(data)
+
+        elif choice == "4":
+            add_program(data)
+
+        elif choice == "5":
+            view_programs(data)
+
+        elif choice == "6":
+            search_program(data)
+
+        elif choice == "7":
+            add_customer(data)
+
+        elif choice == "8":
+            view_customers(data)
+
+        elif choice == "9":
+            add_inquiry(data)
+
+        elif choice == "10":
+            view_inquiries(data)
+
+        elif choice == "11":
+            update_inquiry(data)
+
+        elif choice == "12":
+            generate_report(data)
+
+        elif choice == "13":
+            print("\nThank you for using Veda Technology Management System!")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+
+
+# -----------------------------
+# PROGRAM START
+# -----------------------------
+
+if __name__ == "__main__":
+    main()
+
+

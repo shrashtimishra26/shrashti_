@@ -2133,3 +2133,288 @@ if __name__ == "__main__":
     main()
 
 
+
+
+
+# MAJOR PROJECT 3
+
+
+import csv
+import json
+from datetime import datetime
+
+CSV_FILE = "expenses.csv"
+JSON_FILE = "budget.json"
+
+
+# -------------------- FILE SETUP --------------------
+
+def initialize_files():
+    try:
+        with open(CSV_FILE, "x", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["Date", "Category", "Description", "Amount"])
+
+    except FileExistsError:
+        pass
+
+    try:
+        with open(JSON_FILE, "x") as file:
+            json.dump({"monthly_budget": 0}, file, indent=4)
+
+    except FileExistsError:
+        pass
+
+
+# -------------------- ADD EXPENSE --------------------
+
+def add_expense():
+    try:
+        amount = float(input("Enter amount: ₹"))
+
+        if amount <= 0:
+            print("Amount must be greater than 0.")
+            return
+
+        category = input("Enter category: ")
+        description = input("Enter description: ")
+
+        date = datetime.now().strftime("%Y-%m-%d")
+
+        with open(CSV_FILE, "a", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow([
+                date,
+                category,
+                description,
+                amount
+            ])
+
+        print("Expense added successfully!")
+
+    except ValueError:
+        print("Please enter a valid amount.")
+
+
+# -------------------- VIEW EXPENSES --------------------
+
+def view_expenses():
+    try:
+        with open(CSV_FILE, "r") as file:
+            reader = csv.DictReader(file)
+
+            expenses = list(reader)
+
+            if not expenses:
+                print("No expenses found.")
+                return
+
+            print("\n------ ALL EXPENSES ------")
+
+            for expense in expenses:
+                print(
+                    f"Date: {expense['Date']} | "
+                    f"Category: {expense['Category']} | "
+                    f"Description: {expense['Description']} | "
+                    f"Amount: ₹{expense['Amount']}"
+                )
+
+    except FileNotFoundError:
+        print("Expense file not found.")
+
+
+# -------------------- SET BUDGET --------------------
+
+def set_budget():
+    try:
+        budget = float(input("Enter monthly budget: ₹"))
+
+        if budget <= 0:
+            print("Budget must be greater than 0.")
+            return
+
+        with open(JSON_FILE, "w") as file:
+            json.dump(
+                {"monthly_budget": budget},
+                file,
+                indent=4
+            )
+
+        print("Monthly budget saved successfully!")
+
+    except ValueError:
+        print("Please enter a valid budget.")
+
+
+# -------------------- GET BUDGET --------------------
+
+def get_budget():
+    try:
+        with open(JSON_FILE, "r") as file:
+            data = json.load(file)
+
+        return data.get("monthly_budget", 0)
+
+    except (FileNotFoundError, json.JSONDecodeError):
+        return 0
+
+
+# -------------------- MONTHLY SUMMARY --------------------
+
+def monthly_summary():
+    total = 0
+
+    current_month = datetime.now().strftime("%Y-%m")
+
+    try:
+        with open(CSV_FILE, "r") as file:
+            reader = csv.DictReader(file)
+
+            for expense in reader:
+
+                if expense["Date"].startswith(current_month):
+                    total += float(expense["Amount"])
+
+        budget = get_budget()
+        remaining = budget - total
+
+        print("\n------ MONTHLY SUMMARY ------")
+        print(f"Monthly Budget : ₹{budget}")
+        print(f"Total Spending : ₹{total}")
+        print(f"Remaining      : ₹{remaining}")
+
+        if budget > 0:
+
+            if total > budget:
+                print("⚠️ Budget exceeded!")
+
+            else:
+                print("✅ You are within your budget.")
+
+    except FileNotFoundError:
+        print("Expense file not found.")
+
+
+# -------------------- CATEGORY SUMMARY --------------------
+
+def category_summary():
+
+    category_totals = {}
+
+    try:
+        with open(CSV_FILE, "r") as file:
+            reader = csv.DictReader(file)
+
+            for expense in reader:
+
+                category = expense["Category"]
+                amount = float(expense["Amount"])
+
+                if category in category_totals:
+                    category_totals[category] += amount
+                else:
+                    category_totals[category] = amount
+
+        print("\n------ CATEGORY SUMMARY ------")
+
+        if not category_totals:
+            print("No expenses found.")
+            return
+
+        for category, amount in category_totals.items():
+            print(f"{category}: ₹{amount}")
+
+    except FileNotFoundError:
+        print("Expense file not found.")
+
+
+# -------------------- SEARCH EXPENSE --------------------
+
+def search_expense():
+
+    keyword = input("Enter category or description to search: ").lower()
+
+    found = False
+
+    try:
+        with open(CSV_FILE, "r") as file:
+            reader = csv.DictReader(file)
+
+            print("\n------ SEARCH RESULTS ------")
+
+            for expense in reader:
+
+                category = expense["Category"].lower()
+                description = expense["Description"].lower()
+
+                if keyword in category or keyword in description:
+
+                    print(
+                        f"Date: {expense['Date']} | "
+                        f"Category: {expense['Category']} | "
+                        f"Description: {expense['Description']} | "
+                        f"Amount: ₹{expense['Amount']}"
+                    )
+
+                    found = True
+
+        if not found:
+            print("No matching expense found.")
+
+    except FileNotFoundError:
+        print("Expense file not found.")
+
+
+# -------------------- MAIN MENU --------------------
+
+def main():
+
+    initialize_files()
+
+    while True:
+
+        print("\n==============================")
+        print(" PERSONAL EXPENSE TRACKER")
+        print("==============================")
+
+        print("1. Add Expense")
+        print("2. View Expenses")
+        print("3. Set Monthly Budget")
+        print("4. Monthly Summary")
+        print("5. Category-wise Summary")
+        print("6. Search Expense")
+        print("7. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            add_expense()
+
+        elif choice == "2":
+            view_expenses()
+
+        elif choice == "3":
+            set_budget()
+
+        elif choice == "4":
+            monthly_summary()
+
+        elif choice == "5":
+            category_summary()
+
+        elif choice == "6":
+            search_expense()
+
+        elif choice == "7":
+            print("Thank you for using Expense Tracker!")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+
+
+# -------------------- PROGRAM START --------------------
+
+if __name__ == "__main__":
+    main()
+

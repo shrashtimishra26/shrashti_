@@ -135,11 +135,18 @@ print("____THANK YOU FOR SHOPPING____")
 ## micro project 
 
 
-
+## project screenshots 
 <img width="919" height="616" alt="login page" src="https://github.com/user-attachments/assets/4d782678-330a-4f75-9aea-2b7f6005514a" />
 
 <img width="971" height="572" alt="image" src="https://github.com/user-attachments/assets/89c8ba4e-42ad-4095-ba30-2a1f43cf3ac0" />
 
+<img width="946" height="554" alt="image" src="https://github.com/user-attachments/assets/f5e3aa70-dee6-4ecb-bfb0-86198afdbe69" />
+
+<img width="964" height="585" alt="image" src="https://github.com/user-attachments/assets/bb91869a-5a77-40bb-b8aa-dfd021f06001" />
+
+<img width="971" height="605" alt="image" src="https://github.com/user-attachments/assets/f0fff1b8-f1b1-4105-8856-ff18d70dd4a2" />
+
+<img width="938" height="467" alt="image" src="https://github.com/user-attachments/assets/7ecaece2-7a89-40a4-93ba-1e756d11362b" />
 
 ## Technology used 
 
@@ -167,7 +174,7 @@ Multi-User Portfolio Website
 ├── templates/
 │   ├── login.html
 │   ├── shrashti.html
-│   └── yashika.html
+│   
 │
 ├── static/
 │   ├── css/

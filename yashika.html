@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shrashti Mishra | Portfolio</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/yashika.css') }}"
+    >
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">YS.</div>
+
+        <nav>
+            <a href="#home" class="active">⌂ &nbsp; Home</a>
+            <a href="#about">♙ &nbsp; About</a>
+            <a href="#projects">▣ &nbsp; Projects</a>
+            <a href="#skills">〈〉 &nbsp; Skills</a>
+            
+            <a href="#contact">✉ &nbsp; Contact</a>
+            <a href="#connect">◉ &nbsp; Connect</a>
+        </nav>
+
+        <a href="/logout" class="logout">↪ Logout</a>
+
+    </aside>
+
+
+    
+    <main>
+
+        <!-- HOME -->
+
+        <section id="home" class="hero">
+
+            <p class="small-heading">WELCOME TO MY PORTFOLIO</p>
+
+            <h1>
+                Hi, I'm<br>
+                <span>yashika sharma</span>
+            </h1>
+
+            <h2>BTech AI Student </h2>
+
+            <p class="description">
+                I am a motivated and detail-oriented student
+                passionate about technology, programming and
+                Artificial Intelligence. I enjoy learning new
+                technologies, developing projects and improving
+                my technical skills.
+            </p>
+
+            <div class="buttons">
+                <a href="#projects" class="primary-btn">
+                    View My Work &nbsp; →
+                </a>
+
+                <a href="#contact" class="secondary-btn">
+                    Get in Touch
+                </a>
+            </div>
+
+        </section>
+
+
+        <!-- ABOUT -->
+
+        <section id="about" class="content-section">
+
+            <p class="small-heading">GET TO KNOW ME</p>
+
+            <h2>About <span>Me</span></h2>
+
+            <div class="about-content">
+
+                
+                <img src="{{ url_for('static', filename='images/yashika photo.jpeg') }}"
+     alt="yashika sharma">
+                <div>
+                    <h3>Career Objective</h3>
+
+                    <p>
+                        Motivated and detail-oriented student with
+                        a strong interest in technology, programming,
+                        and continuous learning. Seeking opportunities
+                        to enhance technical skills, contribute to
+                        real-world projects, and build a successful
+                        career in software development.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section id="education" class="content-section">
+
+            <p class="small-heading">MY ACADEMIC JOURNEY</p>
+
+            <h2>My <span>Education</span></h2>
+
+            <div class="info-card">
+                <h3>Bachelor of Technology</h3>
+                <p>Madhav Institute of Technology and Science, Gwalior</p>
+                <p>Branch: Artificial Intelligence</p>
+                <p>Currently Pursuing</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Class 12th</h3>
+                <p>Percentage: 85%</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Class 10th</h3>
+                <p>Percentage: 92%</p>
+            </div>
+
+        </section>
+
+        <section id="projects" class="content-section">
+
+            <p class="small-heading">WHAT I HAVE BUILT</p>
+
+            <h2>My <span>Projects</span></h2>
+
+            <div class="project-grid">
+
+               
+
+                
+                </div>
+
+                <div class="info-card">
+                    <h3>Personal Portfolio</h3>
+                    <p>A personal portfolio website.</p>
+                    <span>HTML • CSS</span>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="skills" class="content-section">
+
+            <p class="small-heading">MY TECHNICAL KNOWLEDGE</p>
+
+            <h2>My <span>Skills</span></h2>
+
+            <div class="skill-list">
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>Python</span>
+               
+            </div>
+
+        </section>
+
+        <section id="contact" class="content-section">
+
+            <p class="small-heading">LET'S TALK</p>
+
+            <h2>Contact <span>Me</span></h2>
+
+            <div class="info-card">
+                <p>Email: yashikas0203@gmail.com </p>
+                <p>Phone: 9893899008</p>
+                <p>Location: Gwalior, Madhya Pradesh</p>
+            </div>
+
+        </section>
+
+        <section id="connect" class="content-section">
+
+            <p class="small-heading">FIND ME ONLINE</p>
+
+            <h2>Let's <span>Connect</span></h2>
+
+            <div class="buttons">
+
+                
+
+                <a href="https://www.linkedin.com/in/yashika-sharma-369997415"
+                   target="_blank" class="secondary-btn">
+                    LinkedIn →
+                </a>
+
+            </div>
+
+            <p class="declaration">
+                I hereby declare that all the above information
+                is true to the best of my knowledge and belief.
+                <br><br>
+                — Yashika sharma 
+            </p>
+
+        </section>
+
+
+        <footer>
+            © 2026 Yashika sharma. All Rights Reserved.
+        </footer>
+
+    </main>
+
+</body>
+</html>
